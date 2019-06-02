@@ -17,7 +17,7 @@ docker run -d --name docker-registry-cache -v ~/squid-cache:/var/cache/squid -v 
 ## 使用
 1. 下载证书：curl -O 127.0.0.1/ca.cert
 2. 信任/安装证书
-3. http代理设置为http://127.0.0.1:3128，开始使用
+3. http代理设置为http://127.0.0.1:3128 ，开始使用
 
 ## 特殊使用
 - 终端使用
