@@ -27,7 +27,7 @@ export https_proxy=http://127.0.0.1:3128
 export no_proxy='127.0.0.0/8,10.0.0.0/8,172.17.0.0/16,192.168.64.0/24'
 curl ip.gs
 ```
-- 给minikube使用
+- 给minikube使用  
 下载到的证书放在~\.minikube\files\etc\ssl\certs，然后minikube start
 
 ## 小声嘀咕
