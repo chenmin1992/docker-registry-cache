@@ -10,9 +10,9 @@ docker build -t docker-registry-cache .
 ```
 docker run -d --name docker-registry-cache -v ~/squid-cache:/var/cache/squid -v ~/ssr.json:/etc/shadowsocks/config.json -v ~/CA.pem:/etc/squid/ssl_cert/CA.pem -p 3128:3128 -p 80:80 docker-registry-cache
 ```
--v ~/squid-cache:/var/cache/squid            设置缓存目录
--v ~/ssr.json:/etc/shadowsocks/config.json   过某防火墙用的配置，外边那位需要自己解决
--v ~/CA.pem:/etc/squid/ssl_cert/CA.pem       证书，用于动态生成缓存HTTPS用的证书
+-v ~/squid-cache:/var/cache/squid            设置缓存目录  
+-v ~/ssr.json:/etc/shadowsocks/config.json   过某防火墙用的配置，外边那位需要自己解决  
+-v ~/CA.pem:/etc/squid/ssl_cert/CA.pem       证书，用于动态生成缓存HTTPS用的证书  
 
 ## 使用
 1. 下载证书：curl -O 127.0.0.1/ca.cert
