@@ -1,6 +1,11 @@
 # docker-registry-cache
 docker registry/images cache proxy, with bypass the certain firewall.  
 docker registry/images缓存，把docker镜像缓存起来下次就不用再费劲的拉了，可以翻越某防火墙。
+## 功能
+- 缓存docker pull镜像
+- 翻越某防火墙
+- 使用自己的代理
+- 自定义CA
 ## 构建镜像
 ```
 docker build -t docker-registry-cache .
@@ -8,7 +13,10 @@ docker build -t docker-registry-cache .
 
 ## 运行
 ```
-docker run -d --name docker-registry-cache -v ~/squid-cache:/var/cache/squid -v ~/ssr.json:/etc/shadowsocks/config.json -v ~/CA.pem:/etc/squid/ssl_cert/CA.pem -p 3128:3128 -p 80:80 docker-registry-cache
+docker run -d --name docker-registry-cache \
+    -e PROXY=socks5://127.0.0.1:1080 -e DOMAINS=my.registry.com \ # PROXY: 使用自己的外部代理, 比如自己开个小飞机; DOMAINS: 自己的registry, 逗号分割, 只需写域名部分, 不需要http(s)://
+    -v ~/squid-cache:/var/cache/squid -v ~/ssr.json:/etc/shadowsocks/config.json -v ~/CA.pem:/etc/squid/ssl_cert/CA.pem \ # 缓存目录 ss配置目录 CA
+    -p 3128:3128 -p 80:80 docker-registry-cache
 ```
 -v ~/squid-cache:/var/cache/squid            设置缓存目录  
 -v ~/ssr.json:/etc/shadowsocks/config.json   过某防火墙用的配置，外边那位需要自己解决  

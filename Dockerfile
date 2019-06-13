@@ -10,20 +10,24 @@ ADD . /tmp/install
 
 RUN set -ex && cd /tmp && \
     sed -i 's#http://dl-cdn.alpinelinux.org#https://mirror.tuna.tsinghua.edu.cn#g' /etc/apk/repositories && \
-    apk add --update --no-cache supervisor squid proxychains-ng pcre openssl libsodium zlib git gcc autoconf automake build-base c-ares-dev libev-dev libtool linux-headers mbedtls-dev pcre-dev openssl-dev libsodium-dev zlib-dev tzdata && \
+    apk add --update --no-cache bash supervisor squid proxychains-ng privoxy pcre openssl libsodium zlib curl git gcc autoconf automake build-base c-ares-dev libev-dev libtool linux-headers mbedtls-dev pcre-dev openssl-dev libsodium-dev zlib-dev tzdata perl && \
     cp /usr/share/zoneinfo/${TZ} /etc/localtime && \
     echo ${TZ} > /etc/timezone && \
     # compile install shadowsocksr-libev
     cd /tmp && \
     git clone https://github.com/chenmin1992/shadowsocksr-libev.git && cd shadowsocksr-libev && \
     ./autogen.sh && ./configure --prefix=/usr --disable-documentation && make install && cd /tmp && \
+    mkdir /etc/shadowsocks && \
+    cp /tmp/install/ssr.config.json.example /etc/shadowsocks/config.json && \
+    # privoxy
+    curl -skLO https://raw.github.com/zfl9/gfwlist2privoxy/master/gfwlist2privoxy && \
+    bash gfwlist2privoxy 127.0.0.1:1080 && \
+    mv gfwlist.action /etc/privoxy/ && \
+    echo 'actionsfile gfwlist.action' >> /etc/privoxy/config && \
+    chown -R privoxy:privoxy /etc/privoxy && \
     # proxychains
     sed -i 's/^socks/#socks/g' /etc/proxychains/proxychains.conf && \
     sed -i 's/^http/#http/g' /etc/proxychains/proxychains.conf && \
-    echo 'socks5 127.0.0.1 1080' >> /etc/proxychains/proxychains.conf && \
-    # shadowsocks
-    mkdir /etc/shadowsocks && \
-    cp /tmp/install/ssr.config.json.example /etc/shadowsocks/config.json && \
     # squid
     cp /tmp/install/squid-4.x.conf /etc/squid/squid.conf && \
     mkdir -p /etc/squid/ssl_cert/http && \
@@ -39,7 +43,7 @@ RUN set -ex && cd /tmp && \
     cp /tmp/install/docker-cache.ini /etc/supervisor.d/docker-cache.ini && \
     cp /tmp/install/entrypoint.sh /entrypoint.sh && chmod +x /entrypoint.sh && \
     # clean up
-    apk del git gcc autoconf automake build-base c-ares-dev libev-dev libtool linux-headers mbedtls-dev pcre-dev openssl-dev libsodium-dev zlib-dev tzdata && \
+    apk del curl git gcc autoconf automake build-base c-ares-dev libev-dev libtool linux-headers mbedtls-dev pcre-dev openssl-dev libsodium-dev zlib-dev tzdata perl && \
     apk add --no-cache rng-tools $(scanelf --needed --nobanner /usr/bin/ss-* | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' | sort -u) && \
     rm -rf /tmp/*
 
