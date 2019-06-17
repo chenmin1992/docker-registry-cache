@@ -43,7 +43,7 @@ RUN set -ex && cd /tmp && \
     cp /tmp/install/docker-cache.ini /etc/supervisor.d/docker-cache.ini && \
     cp /tmp/install/entrypoint.sh /entrypoint.sh && chmod +x /entrypoint.sh && \
     # clean up
-    apk del curl git gcc autoconf automake build-base c-ares-dev libev-dev libtool linux-headers mbedtls-dev pcre-dev openssl-dev libsodium-dev zlib-dev tzdata perl && \
+    apk del git gcc autoconf automake build-base c-ares-dev libev-dev libtool linux-headers mbedtls-dev pcre-dev openssl-dev libsodium-dev zlib-dev tzdata perl && \
     apk add --no-cache rng-tools $(scanelf --needed --nobanner /usr/bin/ss-* | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' | sort -u) && \
     rm -rf /tmp/*
 

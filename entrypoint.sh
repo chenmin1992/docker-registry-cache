@@ -38,6 +38,9 @@ sslcrtd_program=$(grep sslcrtd_program /etc/squid/squid.conf | awk '{print $2}')
 rm -rf /var/lib/ssl_db
 $sslcrtd_program -c -s /var/lib/ssl_db -M 4MB
 
+echo 'Checking missing swap directories'
+/usr/sbin/squid -z -N -F
+
 echo 'Make sure directory permission'
 chown -R squid:squid /etc/squid /var/lib/ssl_db /var/spool/squid
 chmod -R 0700 /etc/squid/ssl_cert
