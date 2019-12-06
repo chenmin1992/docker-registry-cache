@@ -31,7 +31,7 @@ if [ ! -f /etc/squid/ssl_cert/CA.pem ]; then
 else
     echo 'Cert found, skipping...'
 fi
-openssl x509 -in /etc/squid/ssl_cert/CA.pem -out /etc/squid/ssl_cert/http/ca.cert
+openssl x509 -in /etc/squid/ssl_cert/CA.pem -out /etc/squid/ssl_cert/http/ca.crt
 
 echo 'Clean dynamic certs cache and recreate cache directory'
 sslcrtd_program=$(grep sslcrtd_program /etc/squid/squid.conf | awk '{print $2}')

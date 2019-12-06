@@ -9,7 +9,7 @@ ENV TZ ${TZ}
 ADD . /tmp/install
 
 RUN set -ex && cd /tmp && \
-    sed -i 's#http://dl-cdn.alpinelinux.org#https://mirror.tuna.tsinghua.edu.cn#g' /etc/apk/repositories && \
+    sed -i 's#dl-cdn.alpinelinux.org#mirror.tuna.tsinghua.edu.cn#g' /etc/apk/repositories && \
     apk add --update --no-cache bash supervisor squid proxychains-ng privoxy pcre openssl libsodium zlib curl git gcc autoconf automake build-base c-ares-dev libev-dev libtool linux-headers mbedtls-dev pcre-dev openssl-dev libsodium-dev zlib-dev tzdata perl && \
     cp /usr/share/zoneinfo/${TZ} /etc/localtime && \
     echo ${TZ} > /etc/timezone && \
