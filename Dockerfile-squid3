@@ -1,0 +1,39 @@
+FROM alpine:3.8
+
+LABEL maintainer="klutz <781022537@qq.com>"
+
+ARG TZ="Asia/Shanghai"
+
+ENV TZ ${TZ}
+
+ADD . /tmp/install
+
+RUN set -ex && cd /tmp && \
+    sed -i 's#dl-cdn.alpinelinux.org#mirror.tuna.tsinghua.edu.cn#g' /etc/apk/repositories && \
+    apk add --upgrade --no-cache bash supervisor squid proxychains-ng openssl tzdata && \
+    cp /usr/share/zoneinfo/${TZ} /etc/localtime && \
+    echo ${TZ} > /etc/timezone && cd /tmp && \
+    # squid
+    cp /tmp/install/squid3.conf /etc/squid/squid.conf && \
+    rm -rf /var/lib/ssl_db && \
+    mkdir -p /etc/squid/ssl_cert /var/lib/ssl_db /var/cache/squid && \
+    chown -R squid:squid /etc/squid /var/lib/ssl_db /var/cache/squid && \
+    chmod -R 0700 /etc/squid/ssl_cert && \
+    # http
+    mkdir -p /opt/http && \
+    cp /tmp/install/cert_delivery.py /opt/http/http.py && \
+    echo -n > /opt/http/index.html && \
+    # supervisor
+    mkdir /etc/supervisor.d && \
+    cp /tmp/install/docker-cache.ini /etc/supervisor.d/docker-cache.ini && \
+    cp /tmp/install/entrypoint.sh /entrypoint.sh && chmod +x /entrypoint.sh && \
+    # clean up
+    apk del --purge tzdata && rm -rf /var/cache/apk/* && rm -rf /tmp/*
+
+VOLUME /var/cache/squid /etc/squid/ssl_cert
+
+EXPOSE 3128 80
+
+ENTRYPOINT ["/entrypoint.sh"]
+
+CMD ["/usr/bin/supervisord","-n","-c","/etc/supervisord.conf"]

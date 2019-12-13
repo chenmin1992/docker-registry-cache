@@ -7,21 +7,20 @@ if [ ! -z $PROXY ]; then
     addr=$(echo $PROXY | awk -F'[:/]' '{print $4}')
     port=$(echo $PROXY | awk -F'[:/]' '{print $5}')
     if [ ! -z $proto -a ! -z $addr -a ! -z $port ]; then
-        echo "PROXY $PROXY is set, using outter proxy: $proto $addr $port"
+        echo "PROXY $PROXY is set, using upstream proxy: $proto $addr $port"
         echo "$proto $addr $port" >> /etc/proxychains/proxychains.conf
     else
-        echo 'PROXY $PROXY is set,BUT CAN NOT BE PARSED, continue using internal ss-local'
+        echo "PROXY $PROXY is set, BUT CAN NOT BE PARSED, all of http requests will connect DIRECTLY"
     fi
 else
-    echo "PROXY $PROXY is not set, using internal ss-local"
-    echo 'http 127.0.0.1 8118' >> /etc/proxychains/proxychains.conf
+    echo 'PROXY is not set, all of http requests will connect DIRECTLY'
 fi
 
 if [ ! -z $DOMAINS ]; then
     array=(${DOMAINS//,/ })
     for domain in ${array[*]}
     do
-        grep "acl sites_allowed url_regex -i ${domain//./\\\\.}" /etc/squid/squid.conf >/dev/null || sed -i "/user defined sites/aacl sites_allowed url_regex -i ${domain//./\\\\.}" /etc/squid/squid.conf
+        grep -q "acl sites_allow url_regex -i ${domain//./\\\\.}" /etc/squid/squid.conf || sed -i "/user defined sites/aacl sites_allow url_regex -i ${domain//./\\\\.}" /etc/squid/squid.conf
     done
 fi
 
@@ -53,7 +52,7 @@ echo 'Checking missing swap directories'
 /usr/sbin/squid -z -N -F
 
 echo 'Make sure directory permission'
-chown -R squid:squid /etc/squid /var/lib/ssl_db /var/spool/squid
+chown -R squid:squid /etc/squid /var/lib/ssl_db /var/cache/squid
 chmod -R 0700 /etc/squid/ssl_cert
 
 echo 'Start supervisor'
