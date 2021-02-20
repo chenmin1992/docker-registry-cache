@@ -34,6 +34,4 @@ VOLUME /var/cache/squid /etc/squid/ssl_cert
 
 EXPOSE 3128 80
 
-ENTRYPOINT ["/entrypoint.sh"]
-
-CMD ["/usr/bin/supervisord","-n","-c","/etc/supervisord.conf"]
+CMD ["/entrypoint.sh"]

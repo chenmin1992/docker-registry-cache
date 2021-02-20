@@ -1,6 +1,6 @@
 # docker-registry-cache
 docker registry/images cache proxy, with bypass the certain firewall.  
-docker registry/images缓存，把docker镜像缓存起来下次就不用再费劲的拉了，可以翻越某防火墙。
+docker registry/images 缓存，把docker镜像缓存起来下次就不用再费劲的拉了，可以翻越某防火墙。
 ## 功能
 - 缓存docker pull镜像
 - 翻越某防火墙
@@ -24,17 +24,22 @@ docker run -d --name docker-registry-cache \
 -v ~/CA.pem:/etc/squid/ssl_cert/CA.pem       证书，用于动态生成缓存HTTPS用的证书  
 
 ## 使用
-1. 下载证书：curl -O 127.0.0.1/ca.cert
+1. 下载证书：curl -O 127.0.0.1/ca.crt
 2. 信任/安装证书
 3. http代理设置为http://127.0.0.1:3128 ，开始使用
 
 ## 特殊使用
 - 终端使用
-```
+```bash
 export http_proxy=http://127.0.0.1:3128
 export https_proxy=http://127.0.0.1:3128
 export no_proxy='127.0.0.0/8,10.0.0.0/8,172.17.0.0/16,192.168.64.0/24'
 curl ip.gs
+```
+- 给docker使用  
+```bash
+curl 127.0.0.1/ca.crt > ~/.docker/ca.pem
+systemctl restart docker
 ```
 - 给minikube使用  
 下载到的证书放在~\.minikube\files\etc\ssl\certs，然后minikube start

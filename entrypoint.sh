@@ -56,4 +56,4 @@ chown -R squid:squid /etc/squid /var/lib/ssl_db /var/cache/squid
 chmod -R 0700 /etc/squid/ssl_cert
 
 echo 'Start supervisor'
-exec $@
+/usr/bin/supervisord -n -c /etc/supervisord.conf
