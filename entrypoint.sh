@@ -49,6 +49,7 @@ rm -rf /var/lib/ssl_db
 $sslcrtd_program -c -s /var/lib/ssl_db -M 4MB
 
 echo 'Checking missing swap directories'
+chown -R squid:squid /var/cache/squid
 /usr/sbin/squid -z -N -F
 
 echo 'Make sure directory permission'
